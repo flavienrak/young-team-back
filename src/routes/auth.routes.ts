@@ -3,6 +3,7 @@ import express from 'express';
 import {
   login,
   logout,
+  oauthRegister,
   register,
   requireAuth,
 } from '@/controllers/auth.controller';
@@ -18,6 +19,7 @@ router.get('/jwt', isAuthenticated, requireAuth);
 
 router.post('/login', loginValidation, login);
 router.post('/register', registerValidation, register);
+router.post('/register/:token', oauthRegister);
 router.get('/logout', logout);
 
 export default router;

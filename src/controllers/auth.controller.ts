@@ -41,10 +41,22 @@ const login = async (req: Request, res: Response): Promise<void> => {
 
       let user = await prisma.user.findUnique({
         where: { email: body.email.toLowerCase() },
+        include: {
+          userInfos: {
+            select: {
+              isVerified: true,
+            },
+          },
+        },
       });
 
       if (!user) {
         res.json({ userNotFound: true });
+        return;
+      }
+
+      if (!user.userInfos?.isVerified) {
+        res.json({ notVerified: true });
         return;
       }
 
@@ -181,4 +193,77 @@ const logout = async (req: Request, res: Response) => {
   }
 };
 
-export { requireAuth, login, register, logout };
+const oauthRegister = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { token } = req.params;
+    const { password }: { password: string } = req.body;
+
+    if (!token || !password) {
+      res.json({ error: 'Token ou mot de passe manquant' });
+      return;
+    }
+
+    const decoded = jwt.verify(token, secretKey) as {
+      infos: { name: string; email: string; profile: string };
+    };
+
+    const { name, email, profile } = decoded.infos;
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (existingUser) {
+      res.json({ userAlreadyExist: true });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await prisma.user.create({
+      data: {
+        name,
+        email: email.toLowerCase(),
+        password: hashedPassword,
+        profile: profile || '',
+      },
+    });
+
+    await prisma.userInfos.create({
+      data: {
+        userId: newUser.id,
+        isVerified: true,
+      },
+    });
+
+    const payload = {
+      id: newUser.id,
+      authToken: true,
+    };
+
+    const authToken = jwt.sign({ infos: payload }, secretKey, {
+      expiresIn: maxAgeAuthToken,
+    });
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none' as const,
+      maxAge: maxAgeAuthToken,
+    };
+
+    res.cookie(authTokenName, authToken, cookieOptions);
+    res.status(201).json({
+      user: {
+        id: newUser.id,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ unknownError: error });
+    }
+  }
+};
+export { requireAuth, login, register, logout, oauthRegister };
