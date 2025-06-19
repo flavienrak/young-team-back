@@ -18,12 +18,6 @@ const loginValidation = [
     .withMessage('type required')
     .isIn(['person', 'organization'])
     .withMessage('invalid type'),
-  body('secteur')
-    .if(body('type').equals('organization'))
-    .notEmpty()
-    .withMessage('secteur required ')
-    .isLength({ min: 2 })
-    .withMessage('invalid secteur'),
 ];
 
 const registerValidation = [
