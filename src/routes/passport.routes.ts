@@ -32,7 +32,7 @@ router.get(
         maxAge: maxAgeAuthToken,
       });
 
-      res.redirect(`${frontendUri}/room`);
+      res.redirect(`${frontendUri}/home`);
     }
   },
 );
