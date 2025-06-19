@@ -35,22 +35,26 @@ const login = async (req: Request, res: Response): Promise<void> => {
       const body: {
         email: string;
         password: string;
+        type: 'person' | 'organization';
       } = req.body;
 
       let user = await prisma.user.findUnique({
         where: { email: body.email.toLowerCase() },
       });
+
       if (!user) {
         res.json({ userNotFound: true });
         return;
       }
 
-      const incorrectPassword = await bcrypt.compare(
-        body.password,
-        user.password,
-      );
+      if (user.type !== body.type) {
+        res.json({ userNotFound: true });
+        return;
+      }
 
-      if (!incorrectPassword) {
+      const passwordMatch = await bcrypt.compare(body.password, user.password);
+
+      if (!passwordMatch) {
         res.json({ incorrectPassword: true });
         return;
       }
@@ -64,28 +68,20 @@ const login = async (req: Request, res: Response): Promise<void> => {
         expiresIn: maxAgeAuthToken,
       });
 
-      const cookieOptions: {
-        httpOnly: boolean;
-        secure: boolean;
-        sameSite: boolean | 'none' | 'lax' | 'strict';
-        maxAge?: number;
-      } = {
+      const cookieOptions = {
         httpOnly: true,
         secure: true,
-        sameSite: 'none',
+        sameSite: 'none' as const,
       };
 
       res.cookie(authTokenName, authToken, cookieOptions);
-
       res.status(200).json({ user: { id: user.id } });
-      return;
     } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
         res.status(500).json({ unknownError: error });
       }
-      return;
     }
   }
 };
