@@ -142,7 +142,7 @@ const getArticleById = async (req: Request, res: Response) => {
       return;
     }
 
-    res.json(article);
+    res.json({ article });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
