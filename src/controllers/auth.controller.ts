@@ -72,6 +72,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
         httpOnly: true,
         secure: true,
         sameSite: 'none' as const,
+        maxAge: maxAgeAuthToken,
       };
 
       res.cookie(authTokenName, authToken, cookieOptions);
