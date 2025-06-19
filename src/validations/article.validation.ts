@@ -7,11 +7,15 @@ const articleValidation = [
     .isLength({ min: 3 })
     .withMessage('invalid title'),
 
-  body('content')
+  body('sections')
+    .isArray({ min: 1 })
+    .withMessage('sections must be a non-empty array'),
+
+  body('sections.*.content')
     .notEmpty()
-    .withMessage('content required')
+    .withMessage('section content required')
     .isLength({ min: 6 })
-    .withMessage('invalid content'),
+    .withMessage('invalid section content'),
 ];
 
 const updateValidation = [
@@ -27,10 +31,15 @@ const updateValidation = [
     .isLength({ min: 3 })
     .withMessage('invalid title'),
 
-  body('content')
+  body('sections')
+    .isArray({ min: 1 })
+    .withMessage('sections must be a non-empty array'),
+
+  body('sections.*.content')
     .notEmpty()
-    .withMessage('content required')
+    .withMessage('section content required')
     .isLength({ min: 6 })
-    .withMessage('invalid content'),
+    .withMessage('invalid section content'),
 ];
+
 export { articleValidation, updateValidation };

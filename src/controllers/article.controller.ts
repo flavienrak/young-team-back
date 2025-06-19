@@ -12,14 +12,19 @@ const createArticle = async (req: Request, res: Response) => {
   }
 
   const { title, sections } = req.body;
-
   const { userId } = res.locals;
+  const id = Number(userId);
+
+  if (!userId || isNaN(id)) {
+    res.json({ invalidId: true });
+    return;
+  }
 
   try {
     const partage = await prisma.partage.create({
       data: {
         title,
-        userId: Number(userId),
+        userId: id,
         fileId: 0,
       },
     });
@@ -31,7 +36,7 @@ const createArticle = async (req: Request, res: Response) => {
         const createdSection = await prisma.section.create({
           data: {
             content: sec.content,
-            userId: Number(userId),
+            userId: id,
             partageId: partage.id,
           },
         });
@@ -46,7 +51,7 @@ const createArticle = async (req: Request, res: Response) => {
     if (uploadedFiles && uploadedFiles.length > 0) {
       const filesToCreate = uploadedFiles.map((file, i) => ({
         src: path.join('uploads', file.filename),
-        userId: Number(userId),
+        userId: id,
         sectionId: createdSections[i % createdSections.length].id,
       }));
 
@@ -119,6 +124,12 @@ const updateArticle = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { title, sections } = req.body;
   const { userId } = res.locals;
+  const user = Number(userId);
+
+  if (!userId || isNaN(user)) {
+    res.json({ invalidId: true });
+    return;
+  }
 
   try {
     const existingArticle = await prisma.partage.findUnique({
@@ -147,7 +158,7 @@ const updateArticle = async (req: Request, res: Response) => {
           where: {
             id: Number(section.id),
             partageId: Number(id),
-            userId: Number(userId),
+            userId: user,
           },
           data: { content: section.content },
         });
@@ -158,7 +169,7 @@ const updateArticle = async (req: Request, res: Response) => {
     if (uploadedFiles && uploadedFiles.length > 0 && Array.isArray(sections)) {
       const filesToCreate = uploadedFiles.map((file, i) => ({
         src: path.join('uploads', file.filename),
-        userId: Number(userId),
+        userId: user,
         sectionId: Number(sections[i]?.id),
       }));
 
@@ -196,6 +207,12 @@ const updateArticle = async (req: Request, res: Response) => {
 const deleteArticle = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { userId } = res.locals;
+  const user = Number(userId);
+
+  if (!userId || isNaN(user)) {
+    res.json({ invalidId: true });
+    return;
+  }
 
   try {
     const article = await prisma.partage.findUnique({
@@ -208,7 +225,7 @@ const deleteArticle = async (req: Request, res: Response) => {
       return;
     }
 
-    if (article.userId !== Number(userId)) {
+    if (article.userId !== user) {
       res.json({ unAuthorized: true });
       return;
     }
