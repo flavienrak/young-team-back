@@ -136,28 +136,12 @@ const getArticleById = async (req: Request, res: Response) => {
 
     const article = await prisma.article.findUnique({
       where: { id: Number(id) },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        secteur: true,
-        userId: true,
-
-        files: {
-          select: {
-            src: true,
-          },
-        },
-
+      include: {
+        user: { select: { id: true, name: true, profession: true, bio: true } },
+        files: true,
         sections: {
-          select: {
-            id: true,
-            content: true,
-            files: {
-              select: {
-                src: true,
-              },
-            },
+          include: {
+            files: true,
           },
         },
       },
@@ -168,11 +152,7 @@ const getArticleById = async (req: Request, res: Response) => {
       return;
     }
 
-    const response = {
-      id: article.id,
-    };
-
-    res.status(200).json({ response });
+    res.status(200).json({ article });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
@@ -181,6 +161,7 @@ const getArticleById = async (req: Request, res: Response) => {
     }
   }
 };
+
 const getAllArticles = async (req: Request, res: Response) => {
   try {
     const articles = await prisma.article.findMany({
