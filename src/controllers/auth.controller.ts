@@ -55,31 +55,41 @@ const login = async (req: Request, res: Response): Promise<void> => {
         return;
       }
 
-      if (!user.userInfos?.isVerified) {
-        const token = jwt.sign(
-          {
-            infos: {
-              email: user.email,
-              name: user.name,
-            },
-          },
-          secretKey,
-          { expiresIn: '7d' },
-        );
-
-        res.json({ token });
-        return;
-      }
-
-      if (user.type !== body.type) {
-        res.json({ userNotFound: true });
-        return;
-      }
-
       const passwordMatch = await bcrypt.compare(body.password, user.password);
 
       if (!passwordMatch) {
         res.json({ incorrectPassword: true });
+        return;
+      }
+
+      if (!user.userInfos?.isVerified) {
+        const code = crypto.randomInt(100000, 1000000).toString();
+
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.GMAIL_USER,
+            pass: process.env.GMAIL_PASS,
+          },
+        });
+
+        await transporter.sendMail({
+          from: `"Net Kids" <${process.env.GMAIL_USER}>`,
+          to: user.email,
+          subject: 'Code de vérification',
+          html: `<p>Bonjour ${user.name}, votre code de vérification est : <strong>${code}</strong>.</p>`,
+        });
+
+        const payload = {
+          id: user.id,
+          code: code,
+        };
+
+        const token = jwt.sign({ infos: payload }, secretKey, {
+          expiresIn: maxAgeAuthToken,
+        });
+
+        res.json({ token });
         return;
       }
 
