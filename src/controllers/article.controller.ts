@@ -138,8 +138,13 @@ const getArticleById = async (req: Request, res: Response) => {
       where: { id: Number(id) },
       include: {
         user: {
-          select: { id: true, name: true, profession: true, bio: true },
-          include: { files: true },
+          select: {
+            id: true,
+            name: true,
+            profession: true,
+            bio: true,
+            files: true,
+          },
         },
         files: true,
         sections: {
@@ -159,8 +164,13 @@ const getArticleById = async (req: Request, res: Response) => {
       where: { secteur: article.secteur },
       include: {
         user: {
-          select: { id: true, name: true, profession: true, bio: true },
-          include: { files: true },
+          select: {
+            id: true,
+            name: true,
+            profession: true,
+            bio: true,
+            files: true,
+          },
         },
         files: true,
         sections: {
