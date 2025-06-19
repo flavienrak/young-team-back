@@ -8,10 +8,10 @@ import {
 } from '@/validations/article.validation';
 import {
   createArticle,
-  deleteArticle,
-  getAllArticles,
-  getArticleById,
-  updateArticle,
+  // deleteArticle,
+  // getAllArticles,
+  // getArticleById,
+  // updateArticle,
 } from '@/controllers/article.controller';
 
 const router = express.Router();
@@ -26,21 +26,21 @@ router.post(
 );
 
 //route pour lire tous les articles
-router.get('/', getAllArticles);
+// router.get('/', getAllArticles);
 
 //get article by id
-router.get('/:id', getArticleById);
+// router.get('/:id', getArticleById);
 
 //route pour modifier l'article
-router.put(
-  '/:id',
-  isAuthenticated,
-  upload.any(),
-  updateValidation,
-  updateArticle,
-);
+// router.put(
+//   '/:id',
+//   isAuthenticated,
+//   upload.any(),
+//   updateValidation,
+//   updateArticle,
+// );
 
 //route pour supprimer l'article
-router.delete('/:id', isAuthenticated, deleteArticle);
+// router.delete('/:id', isAuthenticated, deleteArticle);
 
 export default router;
