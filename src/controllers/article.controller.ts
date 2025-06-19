@@ -159,10 +159,8 @@ const getArticleById = async (req: Request, res: Response) => {
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
-      return;
     }
     res.status(500).json({ unknownError: error });
-    return;
   }
 };
 
