@@ -246,9 +246,17 @@ const oauthRegister = async (req: Request, res: Response): Promise<void> => {
         name,
         email: email.toLowerCase(),
         password: hashedPassword,
-        profile: profile || '',
       },
     });
+
+    if (profile) {
+      await prisma.file.create({
+        data: {
+          src: profile,
+          userId: newUser.id,
+        },
+      });
+    }
 
     await prisma.userInfos.create({
       data: {
@@ -287,4 +295,5 @@ const oauthRegister = async (req: Request, res: Response): Promise<void> => {
     }
   }
 };
+
 export { requireAuth, login, register, logout, oauthRegister };
