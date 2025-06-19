@@ -1,7 +1,7 @@
 import { FileInterface } from './file.interface';
 import { PartageInterface } from './partage.interface';
 import { SectionInterface } from './section.interface';
-import { UserInfoInterface } from './userInfo.interface';
+import { UserInfoInterface } from './userInfos.interface';
 
 export interface UserInterface {
   id: number;
