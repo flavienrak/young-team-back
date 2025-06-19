@@ -43,7 +43,7 @@ const createArticle = async (req: Request, res: Response) => {
         createdSections.push(createdSection);
       }
     } else {
-      res.json({ error: 'Au moins une section est requise' });
+      res.json({ error: 'At least  create one section' });
       return;
     }
 
