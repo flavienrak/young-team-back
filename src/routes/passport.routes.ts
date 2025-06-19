@@ -1,5 +1,6 @@
-import { Router, Request, Response } from 'express';
 import passport from 'passport';
+
+import { Router, Request, Response } from 'express';
 import { maxAgeAuthToken } from '@/utils/constants';
 
 const tokenName = process.env.AUTH_TOKEN_NAME as string;
