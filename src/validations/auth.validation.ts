@@ -47,7 +47,7 @@ const registerValidation = [
   body('secteur')
     .if(body('type').equals('organization'))
     .notEmpty()
-    .withMessage('secteur required for organization')
+    .withMessage('secteur required ')
     .isLength({ min: 2 })
     .withMessage('invalid secteur'),
 ];
