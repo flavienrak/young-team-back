@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "target": "ES2022", // recommandé avec NodeNext
+    "outDir": "dist",
+    "rootDir": "src", // important pour garder la structure
+    "baseUrl": "src", // permet de créer un alias vers src/
+    "paths": {
+      "@/*": ["*"] // @/module → src/module
+    },
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"]
+}
