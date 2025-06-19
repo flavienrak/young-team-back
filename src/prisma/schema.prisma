@@ -40,8 +40,12 @@ model UserInfos {
 }
 
 model Partage {
-  id     Int    @id @default(autoincrement())
-  title  String
+  id              Int    @id @default(autoincrement())
+  title           String
+  description     String
+  secteur         String
+  backgroundImage String
+
   fileId Int
 
   userId Int

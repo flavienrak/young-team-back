@@ -4,7 +4,6 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "profile" TEXT NOT NULL DEFAULT '',
     "secteur" TEXT,
     "type" TEXT NOT NULL DEFAULT 'person',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -29,6 +28,9 @@ CREATE TABLE "UserInfos" (
 CREATE TABLE "Partage" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "secteur" TEXT NOT NULL,
+    "backgroundImage" TEXT NOT NULL,
     "fileId" INTEGER NOT NULL,
     "userId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
