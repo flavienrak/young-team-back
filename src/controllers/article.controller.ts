@@ -1,82 +1,123 @@
 import path from 'path';
 import prisma from '@/lib/db';
+import crypto from 'crypto';
+import fs from 'fs';
 
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
+import { UserInterface } from '@/interfaces/user.interface';
+
+const uniqueId = crypto.randomBytes(4).toString('hex');
 
 const createArticle = async (req: Request, res: Response) => {
   try {
-    const { title, description, secteur } = req.body;
-    console.log(' title:', title);
-    console.log(' description:', description);
-    console.log(' secteur:', secteur);
-
-    const sections = JSON.parse(req.body.sections);
-    console.log(' sections:', sections);
-
-    const userId = Number(res.locals.userId);
-    console.log(' userId:', res.locals.userId);
-
-    const files = req.files as Express.Multer.File[];
-
-    if (!userId || isNaN(userId)) {
-      res.json({ invalidId: true });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
       return;
     }
 
-    if (!files || files.length === 0) {
-      res.json({ imageRequired: true });
+    const { user } = res.locals as { user: UserInterface };
+    const body = req.body as {
+      title: string;
+      description: string;
+      secteur: string;
+      sections: { content: string }[];
+    };
+
+    let bgImage: any = null;
+
+    const sections = body.sections.map((section, index) => {
+      if (req.files && Array.isArray(req.files)) {
+        const file = req.files.find(
+          (f) => f.fieldname === `sections[${index}][file]`,
+        );
+        return {
+          content: section.content,
+          file,
+        };
+      }
+    });
+
+    if (req.files && Array.isArray(req.files)) {
+      bgImage = req.files.find((f) => f.fieldname === 'bgImage');
+    }
+
+    if (!bgImage) {
+      res.json({ bgRequired: true });
+      return;
+    } else if (sections.length === 0) {
+      res.json({ sectionsRequired: true });
       return;
     }
 
-    const bgImage = req.body.bgImage;
-    console.log(' bgImage:', bgImage);
-
-    const file = await prisma.file.create({
+    const article = await prisma.article.create({
       data: {
-        src: bgImage,
-        userId,
+        title: body.title,
+        description: body.description,
+        secteur: body.secteur,
+        userId: user.id,
       },
     });
 
-    const partage = await prisma.partage.create({
+    const extension = path.extname(bgImage.originalname);
+    const fileName = `profile-${user.id}-${Date.now()}-${uniqueId}${extension}`;
+    const uploadsBase = path.join(process.cwd(), 'uploads');
+    const directoryPath = path.join(uploadsBase, `/files/user-${user.id}`);
+    const filePath = path.join(directoryPath, fileName);
+
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath, { recursive: true });
+    }
+    fs.writeFileSync(filePath, bgImage.buffer);
+
+    await prisma.file.create({
       data: {
-        title,
-        description,
-        secteur,
-        userId,
+        src: fileName,
+        userId: user.id,
+        articleId: article.id,
       },
     });
-    console.log(' partage créé avec ID:', partage.id);
 
-    for (let i = 0; i < sections.length; i++) {
-      const section = await prisma.section.create({
-        data: {
-          content: sections[i].content,
-          userId,
-          partageId: partage.id,
-        },
-      });
-      console.log(`section ${i + 1} créée avec ID:`, section.id);
-
-      let image = null;
-      if (files[i + 1]) {
-        image = req.body.image;
-        console.log(` image pour section ${i + 1}:`, image);
-
-        await prisma.file.create({
+    for (const item of sections) {
+      if (item) {
+        const section = await prisma.section.create({
           data: {
-            src: image,
-            userId,
-            sectionId: section.id,
+            content: item.content,
+            userId: user.id,
+            articleId: article.id,
           },
         });
+
+        if (item.file && section) {
+          const extension = path.extname(item.file.originalname);
+          const fileName = `profile-${user.id}-${Date.now()}-${uniqueId}${extension}`;
+          const uploadsBase = path.join(process.cwd(), 'uploads');
+          const directoryPath = path.join(
+            uploadsBase,
+            `/files/user-${user.id}`,
+          );
+          const filePath = path.join(directoryPath, fileName);
+
+          if (!fs.existsSync(directoryPath)) {
+            fs.mkdirSync(directoryPath, { recursive: true });
+          }
+          fs.writeFileSync(filePath, bgImage.buffer);
+
+          await prisma.file.create({
+            data: {
+              src: fileName,
+              userId: user.id,
+              sectionId: section.id,
+            },
+          });
+        }
       }
     }
 
     res.status(201).json({
       article: {
-        id: partage.id,
+        id: article.id,
       },
     });
     return;

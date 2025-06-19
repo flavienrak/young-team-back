@@ -2,7 +2,7 @@ import { FileInterface } from './file.interface';
 import { UserInterface } from './user.interface';
 import { SectionInterface } from './section.interface';
 
-export interface PartageInterface {
+export interface ArticleInterface {
   id: number;
   title: string;
 

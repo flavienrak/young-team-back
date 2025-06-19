@@ -1,6 +1,5 @@
 import express from 'express';
 
-import { upload } from '@/middlewares/multer.middleware';
 import { isAuthenticated } from '@/middlewares/auth.middleware';
 import {
   articleValidation,
@@ -13,14 +12,15 @@ import {
   // getArticleById,
   // updateArticle,
 } from '@/controllers/article.controller';
+import { upload } from '@/lib/multer';
 
 const router = express.Router();
 
 //route pour crée un article
 router.post(
   '/',
-  isAuthenticated,
   upload.any(),
+  isAuthenticated,
   articleValidation,
   createArticle,
 );

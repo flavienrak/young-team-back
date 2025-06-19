@@ -1,4 +1,4 @@
-import { PartageInterface } from './partage.interface';
+import { ArticleInterface } from './article.interface';
 import { SectionInterface } from './section.interface';
 import { UserInterface } from './user.interface';
 
@@ -8,12 +8,12 @@ export interface FileInterface {
 
   userId: number;
   sectionId?: number;
-  partageId?: number;
+  articleId?: number;
 
   createdAt: Date;
   updatedAt: Date;
 
   user: UserInterface;
   section?: SectionInterface;
-  partage?: PartageInterface;
+  article?: ArticleInterface;
 }

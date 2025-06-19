@@ -20,7 +20,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  partages  Partage[]
+  articles  Article[]
   files     File[]
   sections  Section[]
   userInfos UserInfos?
@@ -39,7 +39,7 @@ model UserInfos {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Partage {
+model Article {
   id          Int    @id @default(autoincrement())
   title       String
   description String
@@ -60,13 +60,13 @@ model Section {
   content String
 
   userId    Int
-  partageId Int
+  articleId Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  partage Partage @relation(fields: [partageId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   files File[]
 }
@@ -77,12 +77,12 @@ model File {
 
   userId    Int
   sectionId Int?
-  partageId Int?
+  articleId Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   section Section? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  partage Partage? @relation(fields: [partageId], references: [id], onDelete: Cascade)
+  article Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
 }
