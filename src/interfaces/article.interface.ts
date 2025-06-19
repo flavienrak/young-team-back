@@ -5,6 +5,8 @@ import { SectionInterface } from './section.interface';
 export interface ArticleInterface {
   id: number;
   title: string;
+  description: string;
+  secteur: string;
 
   userId: number;
 
