@@ -38,12 +38,18 @@ const registerValidation = [
     .withMessage('password required')
     .isLength({ min: 6 })
     .withMessage('invalid password'),
-  body('role')
+  body('type')
     .trim()
     .notEmpty()
-    .withMessage('role required')
-    .isIn(['user', 'recruiter', 'admin'])
-    .withMessage('invalid role'),
+    .withMessage('type required')
+    .isIn(['person', 'organization'])
+    .withMessage('invalid type'),
+  body('secteur')
+    .if(body('type').equals('organization'))
+    .notEmpty()
+    .withMessage('secteur required for organization')
+    .isLength({ min: 2 })
+    .withMessage('invalid secteur'),
 ];
 
 export { loginValidation, registerValidation };

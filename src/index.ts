@@ -1,11 +1,17 @@
-import express, { Request, Response } from 'express';
 import path from 'path';
+import passport from 'passport';
+
+import express, { Request, Response } from 'express';
+
+import '@/controllers/passport.controller';
 
 import { app, logger, server } from '@/socket';
-import { isAuthenticated } from '@/middlewares/auth.middleware';
 
 import authRoutes from '@/routes/auth.routes';
-import userRoutes from '@/routes/user.routes';
+import tokenRoutes from './routes/token.routes';
+import passportRoutes from './routes/passport.routes';
+
+app.use(passport.initialize());
 
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
@@ -13,8 +19,9 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Backend running successfully!');
 });
 
+app.use('/api/google', passportRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/user', isAuthenticated, userRoutes);
+app.use('/api/token', tokenRoutes);
 
 const port = process.env.BACKEND_PORT;
 if (!port) {
