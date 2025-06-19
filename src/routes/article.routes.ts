@@ -1,6 +1,5 @@
 import express from 'express';
 
-import { upload } from '@/middlewares/multer.middleware';
 import { isAuthenticated } from '@/middlewares/auth.middleware';
 import {
   articleValidation,
@@ -9,27 +8,28 @@ import {
 import {
   createArticle,
   // deleteArticle,
-  // getArticles,
-  // getArticleById,
+  getArticleById,
+  getAllArticles,
   // updateArticle,
 } from '@/controllers/article.controller';
+import { upload } from '@/lib/multer';
 
 const router = express.Router();
 
 //route pour crée un article
 router.post(
   '/',
-  isAuthenticated,
   upload.any(),
+  isAuthenticated,
   articleValidation,
   createArticle,
 );
 
 //route pour lire tous les articles
-// router.get('/', getArticles);
+router.get('/', getAllArticles);
 
 //get article by id
-// router.get('/:id', getArticleById);
+router.get('/:id', getArticleById);
 
 //route pour modifier l'article
 // router.put(

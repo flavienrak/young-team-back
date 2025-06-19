@@ -14,8 +14,6 @@ import passportRoutes from './routes/passport.routes';
 
 app.use(passport.initialize());
 
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
 app.get('/', (req: Request, res: Response) => {
   res.send('Backend running successfully!');
 });

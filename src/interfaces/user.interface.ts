@@ -1,5 +1,5 @@
 import { FileInterface } from './file.interface';
-import { PartageInterface } from './partage.interface';
+import { ArticleInterface } from './article.interface';
 import { SectionInterface } from './section.interface';
 import { UserInfoInterface } from './userInfos.interface';
 
@@ -13,7 +13,7 @@ export interface UserInterface {
   createdAt: Date;
   updatedAt: Date;
 
-  partages: PartageInterface[];
+  articles: ArticleInterface[];
   files: FileInterface[];
   sections: SectionInterface[];
   userInfos?: UserInfoInterface;

@@ -1,4 +1,5 @@
 import http from 'http';
+import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -31,6 +32,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
+
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 const server = http.createServer(app);
 const io = new Server(server, {
