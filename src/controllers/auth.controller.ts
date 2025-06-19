@@ -36,6 +36,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
         email: string;
         password: string;
         type: 'person' | 'organization';
+        remember: boolean;
       } = req.body;
 
       let user = await prisma.user.findUnique({
@@ -68,12 +69,19 @@ const login = async (req: Request, res: Response): Promise<void> => {
         expiresIn: maxAgeAuthToken,
       });
 
-      const cookieOptions = {
+      const cookieOptions: {
+        httpOnly: boolean;
+        secure: boolean;
+        sameSite: boolean | 'none' | 'lax' | 'strict';
+        maxAge?: number;
+      } = {
         httpOnly: true,
         secure: true,
-        sameSite: 'none' as const,
-        maxAge: maxAgeAuthToken,
+        sameSite: 'none',
       };
+      if (body.remember) {
+        cookieOptions.maxAge = maxAgeAuthToken;
+      }
 
       res.cookie(authTokenName, authToken, cookieOptions);
       res.status(200).json({ user: { id: user.id } });
