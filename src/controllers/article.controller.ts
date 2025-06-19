@@ -180,7 +180,7 @@ const updateArticle = async (req: Request, res: Response) => {
       return;
     }
 
-    if (existingArticle.userId !== Number(userId)) {
+    if (existingArticle.userId !== user) {
       res.json({ unAuthorized: true });
       return;
     }
