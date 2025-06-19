@@ -19,7 +19,7 @@ const requireAuth = (req: Request, res: Response): void => {
     return;
   }
 
-  res.status(200).json({ user: { id: user.id, role: user.role } });
+  res.status(200).json({ user: { id: user.id, type: user.type } });
   return;
 };
 
