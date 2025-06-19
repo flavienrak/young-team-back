@@ -10,6 +10,7 @@ import {
   createArticle,
   deleteArticle,
   getAllArticles,
+  getArticleById,
   updateArticle,
 } from '@/controllers/article.controller';
 
@@ -26,6 +27,9 @@ router.post(
 
 //route pour lire tous les articles
 router.get('/', getAllArticles);
+
+//get article by id
+router.get('/:id', getArticleById);
 
 //route pour modifier l'article
 router.put(

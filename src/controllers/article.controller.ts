@@ -114,6 +114,44 @@ const getAllArticles = async (req: Request, res: Response) => {
   }
 };
 
+const getArticleById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const article = await prisma.partage.findUnique({
+      where: { id: Number(id) },
+      select: {
+        id: true,
+        title: true,
+        sections: {
+          select: {
+            id: true,
+            content: true,
+            files: {
+              select: {
+                src: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!article) {
+      res.json({ articleNotFound: true });
+      return;
+    }
+
+    res.json(article);
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ unknownError: error });
+    }
+  }
+};
+
 const updateArticle = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -244,4 +282,10 @@ const deleteArticle = async (req: Request, res: Response) => {
   }
 };
 
-export { createArticle, getAllArticles, updateArticle, deleteArticle };
+export {
+  createArticle,
+  getAllArticles,
+  getArticleById,
+  updateArticle,
+  deleteArticle,
+};
