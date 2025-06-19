@@ -7,8 +7,16 @@ import { validationResult } from 'express-validator';
 const createArticle = async (req: Request, res: Response) => {
   try {
     const { title, description, secteur } = req.body;
+    console.log(' title:', title);
+    console.log(' description:', description);
+    console.log(' secteur:', secteur);
+
     const sections = JSON.parse(req.body.sections);
+    console.log(' sections:', sections);
+
     const userId = Number(res.locals.userId);
+    console.log(' userId:', res.locals.userId);
+
     const files = req.files as Express.Multer.File[];
 
     if (!userId || isNaN(userId)) {
@@ -22,6 +30,7 @@ const createArticle = async (req: Request, res: Response) => {
     }
 
     const backgroundImage = `uploads/${files[0].filename}`;
+    console.log(' backgroundImage:', backgroundImage);
 
     const partage = await prisma.partage.create({
       data: {
@@ -33,6 +42,7 @@ const createArticle = async (req: Request, res: Response) => {
         userId,
       },
     });
+    console.log(' partage créé avec ID:', partage.id);
 
     const Sections = [];
 
@@ -44,10 +54,13 @@ const createArticle = async (req: Request, res: Response) => {
           partageId: partage.id,
         },
       });
+      console.log(`section ${i + 1} créée avec ID:`, section.id);
 
       let image = null;
       if (files[i + 1]) {
         image = `uploads/${files[i + 1].filename}`;
+        console.log(` image pour section ${i + 1}:`, image);
+
         await prisma.file.create({
           data: {
             src: image,

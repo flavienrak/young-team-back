@@ -20,7 +20,7 @@ const router = express.Router();
 router.post(
   '/',
   isAuthenticated,
-  upload.array('images', 10),
+  upload.any(),
   articleValidation,
   createArticle,
 );
@@ -35,7 +35,7 @@ router.get('/:id', getArticleById);
 router.put(
   '/:id',
   isAuthenticated,
-  upload.array('images', 10),
+  upload.any(),
   updateValidation,
   updateArticle,
 );
