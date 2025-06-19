@@ -88,88 +88,56 @@ const createArticle = async (req: Request, res: Response) => {
     }
   }
 };
+const getArticle = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
 
-// const getAllArticles = async (req: Request, res: Response) => {
-//   try {
-//     const articlesRaw = await prisma.partage.findMany({
-//       include: {
-//         sections: {
-//           include: {
-//             files: true,
-//           },
-//         },
-//       },
-//     });
+    const article = await prisma.partage.findUnique({
+      where: { id: Number(id) },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        secteur: true,
+        userId: true,
 
-//     const articles = articlesRaw.map((article) => ({
-//       id: article.id,
-//       title: article.title,
-//       description: article.description,
-//       categorie: article.secteur,
-//       userId: article.userId,
-//       sections: article.sections.map((section) => ({
-//         content: section.content,
-//         image: section.files[0]?.src || null,
-//       })),
-//     }));
-//     res.status(200).json({ articles });
+        files: {
+          select: {
+            src: true,
+          },
+        },
 
-//     return;
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       res.status(500).json({ error: error.message });
-//     } else {
-//       res.status(500).json({ unknownError: error });
-//     }
-//   }
-// };
+        sections: {
+          select: {
+            id: true,
+            content: true,
+            files: {
+              select: {
+                src: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-// const getArticleById = async (req: Request, res: Response) => {
-//   try {
-//     const id = Number(req.params.id);
-//     if (isNaN(id)) {
-//       res.json({ inalidId: true });
-//       return;
-//     }
+    if (!article) {
+      return res.json({ articleNotFound: true });
+    }
 
-//     const existingArticle = await prisma.partage.findUnique({
-//       where: { id },
-//       include: {
-//         sections: {
-//           include: {
-//             files: true,
-//           },
-//         },
-//       },
-//     });
+    const response = {
+      id: article.id,
+    };
 
-//     if (!existingArticle) {
-//       res.json({ articleNotFound: true });
-//       return;
-//     }
-
-//     const article = {
-//       id: existingArticle.id,
-//       title: existingArticle.title,
-//       description: existingArticle.description,
-//       categorie: existingArticle.secteur,
-//       backgroundImage: existingArticle.backgroundImage,
-//       userId: existingArticle.userId,
-//       sections: existingArticle.sections.map((section) => ({
-//         content: section.content,
-//         image: section.files[0]?.src || null,
-//       })),
-//     };
-
-//     res.status(200).json({ article });
-//     return;
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       res.status(500).json({ error: error.message });
-//     }
-//     res.status(500).json({ unknownError: error });
-//   }
-// };
+    res.status(200).json({ response });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ unknownError: error });
+    }
+  }
+};
 
 // const updateArticle = async (req: Request, res: Response) => {
 //   const errors = validationResult(req);
@@ -303,7 +271,7 @@ const createArticle = async (req: Request, res: Response) => {
 
 export {
   createArticle,
-  // getAllArticles,
+  // getArticles,
   // getArticleById,
   // updateArticle,
   // deleteArticle,

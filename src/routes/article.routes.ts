@@ -9,7 +9,7 @@ import {
 import {
   createArticle,
   // deleteArticle,
-  // getAllArticles,
+  // getArticles,
   // getArticleById,
   // updateArticle,
 } from '@/controllers/article.controller';
@@ -26,7 +26,7 @@ router.post(
 );
 
 //route pour lire tous les articles
-// router.get('/', getAllArticles);
+// router.get('/', getArticles);
 
 //get article by id
 // router.get('/:id', getArticleById);
