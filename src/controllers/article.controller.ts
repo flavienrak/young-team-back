@@ -153,7 +153,7 @@ const getArticleById = async (req: Request, res: Response) => {
     }
 
     const articles = await prisma.article.findMany({
-      where: { id: Number(id) },
+      where: {},
       include: {
         user: {
           select: {
