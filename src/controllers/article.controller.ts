@@ -152,7 +152,19 @@ const getArticleById = async (req: Request, res: Response) => {
       return;
     }
 
-    res.status(200).json({ article });
+    const articles = await prisma.article.findMany({
+      where: { id: Number(id) },
+      include: {
+        user: {
+          select: {
+            id: true,
+            secteur: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({ article, articles });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
@@ -186,13 +198,13 @@ const getAllArticles = async (req: Request, res: Response) => {
       },
     });
 
-   res.status(200).json({ articles });
-   return; 
+    res.status(200).json({ articles });
+    return;
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
     } else {
-     res.status(500).json({ unknownError: error });
+      res.status(500).json({ unknownError: error });
     }
   }
 };
