@@ -205,13 +205,13 @@ const getAllArticles = async (req: Request, res: Response) => {
       },
     });
 
-    res.status(200).json({ articles });
-    return;
+   res.status(200).json({ articles });
+   return; 
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
     } else {
-      res.status(500).json({ unknownError: error });
+     res.status(500).json({ unknownError: error });
     }
   }
 };

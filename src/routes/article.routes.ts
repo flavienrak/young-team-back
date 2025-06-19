@@ -1,16 +1,11 @@
 import express from 'express';
 
 import { isAuthenticated } from '@/middlewares/auth.middleware';
-import {
-  articleValidation,
-  updateValidation,
-} from '@/validations/article.validation';
+import { articleValidation } from '@/validations/article.validation';
 import {
   createArticle,
-  // deleteArticle,
   getArticleById,
   getAllArticles,
-  // updateArticle,
 } from '@/controllers/article.controller';
 import { upload } from '@/lib/multer';
 
@@ -30,17 +25,5 @@ router.get('/', getAllArticles);
 
 //get article by id
 router.get('/:id', getArticleById);
-
-//route pour modifier l'article
-// router.put(
-//   '/:id',
-//   isAuthenticated,
-//   upload.any(),
-//   updateValidation,
-//   updateArticle,
-// );
-
-//route pour supprimer l'article
-// router.delete('/:id', isAuthenticated, deleteArticle);
 
 export default router;
