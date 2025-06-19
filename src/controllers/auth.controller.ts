@@ -56,7 +56,18 @@ const login = async (req: Request, res: Response): Promise<void> => {
       }
 
       if (!user.userInfos?.isVerified) {
-        res.json({ notVerified: true });
+        const token = jwt.sign(
+          {
+            infos: {
+              email: user.email,
+              name: user.name,
+            },
+          },
+          secretKey,
+          { expiresIn: '7d' },
+        );
+
+        res.json({ token });
         return;
       }
 
@@ -195,13 +206,13 @@ const logout = async (req: Request, res: Response) => {
 
 const oauthRegister = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { token } = req.params;
-    const { password }: { password: string } = req.body;
-
-    if (!token || !password) {
-      res.json({ error: 'Token ou mot de passe manquant' });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
       return;
     }
+    const { token } = req.params;
+    const { password }: { password: string } = req.body;
 
     const decoded = jwt.verify(token, secretKey) as {
       infos: { name: string; email: string; profile: string };

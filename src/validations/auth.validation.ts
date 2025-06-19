@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 
 const loginValidation = [
   body('email')
@@ -52,4 +52,12 @@ const registerValidation = [
     .withMessage('invalid secteur'),
 ];
 
-export { loginValidation, registerValidation };
+const oauthValidation = [
+  param('token').notEmpty().withMessage('token required'),
+  body('password')
+    .notEmpty()
+    .withMessage('password required')
+    .isLength({ min: 6 })
+    .withMessage('invalid password'),
+];
+export { loginValidation, registerValidation, oauthValidation };
