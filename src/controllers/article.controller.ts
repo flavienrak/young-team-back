@@ -196,24 +196,19 @@ const getArticleById = async (req: Request, res: Response) => {
 const getAllArticles = async (req: Request, res: Response) => {
   try {
     const articles = await prisma.article.findMany({
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        secteur: true,
-        userId: true,
-        files: {
-          select: { src: true },
-        },
-        sections: {
+      take: 5,
+      include: {
+        files: true,
+        user: {
           select: {
             id: true,
-            content: true,
-            files: {
-              select: { src: true },
-            },
+            name: true,
+            profession: true,
+            bio: true,
+            files: true,
           },
         },
+        sections: { include: { files: true } },
       },
     });
 
