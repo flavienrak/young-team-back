@@ -76,6 +76,7 @@ const createArticle = async (req: Request, res: Response) => {
         src: fileName,
         userId: user.id,
         articleId: article.id,
+        type: 'article',
       },
     });
 
@@ -109,6 +110,7 @@ const createArticle = async (req: Request, res: Response) => {
               src: fileName,
               userId: user.id,
               sectionId: section.id,
+              type: 'section',
             },
           });
         }
