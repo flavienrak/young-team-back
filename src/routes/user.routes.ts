@@ -1,16 +1,27 @@
 import express from 'express';
 
 import { upload } from '@/lib/multer';
-import { updateUser } from '@/controllers/user.controller';
-import { updateProfileValidation } from '@/validations/user.validation';
+import {
+  getUser,
+  updateProfile,
+  updateUser,
+} from '@/controllers/user.controller';
+import {
+  updateProfileValidation,
+  updateUserValidation,
+} from '@/validations/user.validation';
 
 const router = express.Router();
 
+router.get('/', getUser);
+
+router.put('/', updateUserValidation, updateUser);
+
 router.put(
-  '/update-profile',
+  '/profile',
   upload.single('file'),
   updateProfileValidation,
-  updateUser,
+  updateProfile,
 );
 
 export default router;

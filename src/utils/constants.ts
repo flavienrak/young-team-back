@@ -1,6 +1,7 @@
 const maxAgeAuthToken = 31536000000;
 
 const imageMimeTypes = [
+  'image/jpg',
   'image/jpeg',
   'image/png',
   'image/webp',

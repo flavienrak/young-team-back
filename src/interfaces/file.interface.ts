@@ -5,6 +5,7 @@ import { UserInterface } from './user.interface';
 export interface FileInterface {
   id: number;
   src: string;
+  type: string;
 
   userId: number;
   sectionId?: number;

@@ -1,7 +1,6 @@
-import path from 'path';
 import passport from 'passport';
 
-import express, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 import '@/controllers/passport.controller';
 
@@ -12,6 +11,7 @@ import tokenRoutes from './routes/token.routes';
 import articleRoutes from './routes/article.routes';
 import passportRoutes from './routes/passport.routes';
 import userRoutes from './routes/user.routes';
+import { isAuthenticated } from './middlewares/auth.middleware';
 
 app.use(passport.initialize());
 
@@ -22,7 +22,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/api/google', passportRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/token', tokenRoutes);
-app.use('/api/user', userRoutes);
+app.use('/api/user', isAuthenticated, userRoutes);
 app.use('/api/article', articleRoutes);
 
 const port = process.env.BACKEND_PORT;
