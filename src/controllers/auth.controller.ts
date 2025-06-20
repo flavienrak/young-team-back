@@ -254,6 +254,7 @@ const oauthRegister = async (req: Request, res: Response): Promise<void> => {
         data: {
           src: profile,
           userId: newUser.id,
+          type: 'profile',
         },
       });
     }

@@ -55,6 +55,7 @@ CREATE TABLE "Section" (
 CREATE TABLE "File" (
     "id" SERIAL NOT NULL,
     "src" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
     "sectionId" INTEGER,
     "articleId" INTEGER,

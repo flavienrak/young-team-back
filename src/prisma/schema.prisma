@@ -74,8 +74,9 @@ model Section {
 }
 
 model File {
-  id  Int    @id @default(autoincrement())
-  src String
+  id   Int    @id @default(autoincrement())
+  src  String
+  type String
 
   userId    Int
   sectionId Int?
