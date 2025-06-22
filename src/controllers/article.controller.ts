@@ -197,6 +197,9 @@ const getAllArticles = async (req: Request, res: Response) => {
   try {
     const articles = await prisma.article.findMany({
       take: 5,
+      orderBy: {
+        updatedAt: 'desc',
+      },
       include: {
         files: true,
         user: {
